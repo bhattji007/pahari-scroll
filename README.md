@@ -16,6 +16,8 @@ A personal homage to Lingdong Huang's *{Shan, Shui}\** , remade for the hills I 
 | `pahari-scroll.pen` | the pen.dev design file: scroll board and element studies |
 | `reference.md` | sourced facts about Jageshwar, Kumaoni houses, Kangra pigments and Aipan, plus observations from reference photographs |
 
+Live at **https://jageshwar.shubham.club**.
+
 ## Run the site
 
 ```

@@ -1,0 +1,15 @@
+{
+  // Cloudflare Worker serving the site as static assets. `npx wrangler deploy` from this directory.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pahari-scroll",
+  "compatibility_date": "2025-10-01",
+  "assets": {
+    "directory": "./",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "single-page-application"
+  },
+  "routes": [
+    { "pattern": "jageshwar.shubham.club", "custom_domain": true }
+  ],
+  "observability": { "enabled": true }
+}

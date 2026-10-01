@@ -39,6 +39,16 @@ open http://localhost:8787/#seed=7
 
 The math is written up in `../MATH.md`. The design boards and reference research live one directory up.
 
+## Deploy
+
+Live at https://jageshwar.shubham.club, served as Cloudflare Worker static assets. From `site/`:
+
+```
+npx wrangler deploy
+```
+
+`wrangler.jsonc` names the worker and the custom domain; `.assetsignore` keeps scripts and config out of the upload.
+
 ## Scripts
 
 ```
