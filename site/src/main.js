@@ -132,21 +132,33 @@ document.getElementById("save").addEventListener("click", () => {
   URL.revokeObjectURL(a.href);
 });
 // ---------- background music ----------
-// A plain looped track, on by default. Browsers only allow unmuted autoplay after an interaction,
-// so we try at once and otherwise start on the first pointer, key or wheel event.
+// A plain looped track at 40 %, on by default: three seconds after a first visit, at once on later
+// visits, fading in over two seconds. Browsers only allow unmuted autoplay after an interaction, so if
+// the attempt is refused we start on the first pointer, key or wheel event instead.
 const bgm = document.getElementById("bgm");
 const soundBtn = document.getElementById("sound");
-bgm.volume = 0.7;
+const VOLUME = 0.4, FIRST_VISIT_DELAY = 3000;
 let muted = false;
 function showSound() { soundBtn.classList.toggle("on", !muted && !bgm.paused); soundBtn.setAttribute("aria-pressed", String(!muted)); }
-async function playMusic() { if (muted) return; try { await bgm.play(); } catch {} showSound(); }
+function fadeIn() {
+  bgm.volume = 0; const t0 = performance.now();
+  const step = (t) => { const k = Math.min(1, (t - t0) / 2000); bgm.volume = VOLUME * k; if (k < 1 && !muted) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+async function playMusic() {
+  if (muted || !bgm.paused) return;
+  try { await bgm.play(); fadeIn(); } catch { /* autoplay refused; wait for a gesture */ }
+  showSound();
+}
 function armAutoplay() {
   const once = () => { playMusic(); for (const ev of ["pointerdown", "keydown", "wheel", "touchstart"]) removeEventListener(ev, once, true); };
   for (const ev of ["pointerdown", "keydown", "wheel", "touchstart"]) addEventListener(ev, once, true);
 }
-soundBtn.addEventListener("click", (e) => { e.stopPropagation(); muted = !muted; if (muted) bgm.pause(); else playMusic(); showSound(); });
+soundBtn.addEventListener("click", (e) => { e.stopPropagation(); muted = !muted; if (muted) bgm.pause(); else { bgm.volume = VOLUME; playMusic(); } showSound(); });
 bgm.addEventListener("play", showSound); bgm.addEventListener("pause", showSound);
-playMusic().then(() => { if (bgm.paused) armAutoplay(); });
+const firstVisit = !localStorage.getItem("pahari-visited");
+try { localStorage.setItem("pahari-visited", "1"); } catch {}
+setTimeout(() => playMusic().then(() => { if (bgm.paused) armAutoplay(); }), firstVisit ? FIRST_VISIT_DELAY : 0);
 
 document.getElementById("seed").addEventListener("click", () => {
   const s = prompt("Seed (number or word)", seedStr);

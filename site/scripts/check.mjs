@@ -30,8 +30,11 @@ try {
   const report = {};
   report.figures = await evalJs("document.querySelectorAll('.fig').length");
   report.built = await evalJs("document.querySelectorAll('.fig.in').length");
-  await evalJs("window.dispatchEvent(new PointerEvent('pointerdown'))"); await sleep(800);
-  report.musicPlaying = await evalJs("!document.getElementById('bgm').paused");
+  report.musicBefore3s = await evalJs("!document.getElementById('bgm').paused");
+  await sleep(2500);
+  report.musicAfter3s = await evalJs("!document.getElementById('bgm').paused");
+  await sleep(2200);
+  report.volume = await evalJs("Math.round(document.getElementById('bgm').volume * 100) / 100");
   report.musicLoops = await evalJs("document.getElementById('bgm').loop");
   if (hold) { console.log(`holding ${hold}s with music on...`); await sleep(hold * 1000); report.heldSeconds = hold; }
   report.githubLink = await evalJs("document.querySelector('a.gh')?.href");

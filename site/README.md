@@ -22,7 +22,7 @@ open http://localhost:8787/#seed=7
 - space or **drift** to auto-scroll
 - **seed** to type a number or a word; **new** for a random one
 - **save svg** downloads the current view as a standalone SVG
-- background music, *Last Light Over Peaks*, loops from the start; browsers that block unmuted autoplay start it on your first scroll, click or key. The speaker button mutes it
+- background music, *Last Light Over Peaks*, loops at 40 % volume, starting three seconds after a first visit and at once on later ones; browsers that block unmuted autoplay start it on your first scroll, click or key. The speaker button mutes it
 - the URL hash carries `seed` and `x`, so a link reproduces exactly what you see
 - figures are built as they scroll into view: each temple, tree, house and platform rises from its ground point and its pigment layers appear in construction order (stone, light stone, rathas, openings, line work). After a jump the visible figures build in a left-to-right sweep. `prefers-reduced-motion` disables it.
 
