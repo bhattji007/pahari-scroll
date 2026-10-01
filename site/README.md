@@ -39,7 +39,7 @@ The seeded scene never changes; the weather is painted over it:
   and thunderstorm: Kangra clouds that drift with the wind, rain that slants with it, snowfall, fog,
   lightning
 - snow cover whitens slopes and slate roofs; frost greys them when it is below zero without snow
-- humidity thickens the valley mist; wind sways the deodars
+- wind sways the deodars; fog thickens the valley mist
 
 Simulate any of it from the URL, e.g. `#wx=night,snow,temp:-4,wind:25` or `#wx=dusk,rain` or
 `#wx=hour:17.5,fog,humidity:95`. Tokens: `day dawn dusk night`, `clear cloudy overcast fog drizzle rain

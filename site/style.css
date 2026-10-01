@@ -76,7 +76,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--paper)
 #scene stop { transition: stop-color 2.5s ease; }
 #scene.dawn { filter: brightness(.96); }
 #scene.dusk { filter: saturate(1.1) sepia(.12) brightness(.9); }
-#scene.night { filter: brightness(.5) saturate(.6); }
+#scene.night { filter: brightness(.52) saturate(.85) contrast(1.06); }
 #scene [fill], #scene [stroke] { transition: fill 2s ease, stroke 2s ease; }
 /* snow cover: recolour the slopes and roofs; frost: halfway */
 #scene.snowy [fill="#56704E"] { fill: #E7EBE6; }

@@ -113,9 +113,9 @@ export function createWeather({ scene, celestial, fx, status, H, onBands }) {
   function paintFx() {
     const W = innerWidth, Hh = innerHeight;
     fx.setAttribute("viewBox", `0 0 ${W} ${Hh}`);
-    const tint = { night: ["#6A7BA6", 0.5, "multiply"], dusk: ["#D08A5E", 0.22, "multiply"], dawn: ["#E8B1A0", 0.25, "soft-light"], day: ["#000", 0, "normal"] }[phase];
+    const tint = { night: ["#4A5A8A", 0.28, "multiply"], dusk: ["#D08A5E", 0.2, "multiply"], dawn: ["#E8B1A0", 0.22, "soft-light"], day: ["#000", 0, "normal"] }[phase];
     let out = `<rect width="${W}" height="${Hh}" fill="${tint[0]}" opacity="${tint[1]}" style="mix-blend-mode:${tint[2]}"/>`;
-    const fog = kind === "fog" ? 0.55 : Math.max(0, (wx.humidity - 80) / 100) + (kind === "heavysnow" ? 0.15 : 0);
+    const fog = kind === "fog" ? 0.45 : kind === "heavysnow" ? 0.12 : 0;
     if (fog > 0) out += `<rect width="${W}" height="${Hh}" fill="#F2EADA" opacity="${fog.toFixed(2)}"/>`;
     const rainN = reduced ? 0 : { drizzle: 70, rain: 150, heavyrain: 280, storm: 240 }[kind] ?? 0;
     const snowN = reduced ? 0 : { snow: 140, heavysnow: 260 }[kind] ?? 0;
@@ -134,7 +134,7 @@ export function createWeather({ scene, celestial, fx, status, H, onBands }) {
     const g = GREYING[kind];
     setSky(SKY[phase].map((c, i) => mixHex(c, GREY[phase][i], g)));
     mods.gold = phase === "day" && g < 0.5 ? 1 - g : 0;
-    mods.mist = (kind === "fog" ? 1.8 : 1) * (1 + Math.max(0, wx.humidity - 70) / 60) * (phase === "night" ? 0.8 : 1) * (/rain|drizzle/.test(kind) ? 1.25 : 1);
+    mods.mist = (kind === "fog" ? 1.5 : 1) * (phase === "night" ? 0.45 : 1) * (/rain|drizzle/.test(kind) ? 1.1 : 1);
     const snowy = /snow/.test(kind) || (wx.snowfall > 0 && wx.temp <= 1), frost = !snowy && wx.temp <= 0;
     scene.classList.remove("day", "dawn", "dusk", "night", "snowy", "frost", "windy");
     scene.classList.add(phase); if (snowy) scene.classList.add("snowy"); if (frost) scene.classList.add("frost");
