@@ -21,7 +21,6 @@ function readHash() {
 let { seedStr, seed, x } = readHash();
 let terrain = makeTerrain(seed);
 const audio = createPahariAudio({ seed: seedStr, screenWidth: W });
-let lastShrineRing = -Infinity;
 const chunks = new Map(); // c -> { el, data }
 let writeHashTimer = null;
 function writeHash() {
@@ -66,13 +65,11 @@ function revealFigures() {
   sweep = false;
 }
 function sweepNext() { sweep = true; }
-// Bells: a dense complex rings several times, a smaller group once, a lone shrine softly and rarely.
+// Bells: only a dense temple complex rings, several staggered strikes.
 function ringFor(el) {
   if (!audio.running) return;
   const count = Number(el.dataset.count || 0);
-  if (count >= 18) audio.ring(0.6, Math.round(count / 6));
-  else if (count > 0) audio.ring(0.35, 1);
-  else if (el.dataset.shrine && performance.now() - lastShrineRing > 10000) { lastShrineRing = performance.now(); audio.ring(0.2, 1); }
+  if (count >= 18) audio.ring(0.6, Math.round(count / 6)); // temple complexes only; the module enforces 20 s between rings
 }
 
 // ---------- chunk lifecycle ----------

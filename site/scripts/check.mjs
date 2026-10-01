@@ -5,7 +5,7 @@ import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 
 const arg = (k, d) => { const i = process.argv.indexOf("--" + k); return i > -1 ? process.argv[i + 1] : d; };
-const url = arg("url", "http://localhost:8787/#seed=7");
+const url = arg("url", "http://localhost:8787/#seed=7"), hold = Number(arg("hold", 0));
 const browser = ["/Applications/Brave Browser.app/Contents/MacOS/Brave Browser", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"].find(existsSync);
 const port = 9334;
 const proc = spawn(browser, ["--headless=new", `--remote-debugging-port=${port}`, "--window-size=1440,900", "--disable-gpu", "--autoplay-policy=no-user-gesture-required", "about:blank"], { stdio: "ignore" });
@@ -32,6 +32,7 @@ try {
   report.built = await evalJs("document.querySelectorAll('.fig.in').length");
   await evalJs("document.getElementById('sound').click()"); await sleep(800);
   report.soundOn = await evalJs("document.getElementById('sound').classList.contains('on')");
+  if (hold) { console.log(`holding ${hold}s with sound on...`); await sleep(hold * 1000); report.heldSeconds = hold; }
   report.contexts = await evalJs("(typeof AudioContext !== 'undefined')");
   await evalJs("window.dispatchEvent(new WheelEvent('wheel', { deltaY: 2400, cancelable: true }))"); await sleep(600);
   report.posAfterScroll = await evalJs("document.getElementById('pos').textContent");
