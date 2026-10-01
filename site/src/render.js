@@ -32,12 +32,12 @@ export function bandString(band, x0, x1, mist = 0.6) {
 
 export function defsString() {
   const grad = (id, stops) => `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">${stops.map(([o, c, a]) => `<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join("")}</linearGradient>`;
-  return `<defs>${grad("sky", [[0, C.skyTop, 1], [1, C.skyBot, 1]])}${grad("mistFar", [[0, C.mist, 0], [0.6, C.mist, 1], [1, C.mist, 0]])}${grad("mistNear", [[0, C.mist, 0], [0.5, C.mist, 0.8], [1, C.mist, 0]])}</defs>`;
+  return `<defs>${grad("sky", [[0, C.skyTop, 1], [0.55, "#EDE0C8", 1], [1, C.skyBot, 1]])}${grad("mistFar", [[0, C.mist, 0], [0.6, C.mist, 1], [1, C.mist, 0]])}${grad("mistNear", [[0, C.mist, 0], [0.5, C.mist, 0.8], [1, C.mist, 0]])}</defs>`;
 }
 
 // The empty layer skeleton the browser fills incrementally: <g id="L-sky"/>, band, <g id="L-snow"/>, ...
 export function skeletonString() {
-  return LAYERS.map((l) => `<g id="L-${l}"></g>` + BANDS.filter((b) => b.after === l).map((b) => bandString(b, 0, 0)).join("")).join("");
+  return LAYERS.map((l) => `<g id="L-${l}"></g>` + BANDS.filter((b) => b.after === l).map((b) => bandString(b, 0, 0)).join("") + (l === "sky" ? `<g id="celestial"></g>` : "")).join("");
 }
 
 // A standalone SVG document of the given chunks, viewBox from x0 to x1.

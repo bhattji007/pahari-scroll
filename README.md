@@ -27,4 +27,5 @@ open http://localhost:8787/#seed=7
 ```
 
 Scroll, drag or use the arrow keys. Space drifts. Any word works as a seed. *Last Light Over Peaks*
-plays in the background; the speaker mutes it. The URL reproduces exactly what you see.
+plays in the background; the speaker mutes it. The URL reproduces exactly what you see, and the
+valley is painted in Jageshwar's live weather and time of day, from Open-Meteo.

@@ -11,12 +11,17 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--paper)
 
 #scene { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; touch-action: none; cursor: grab; }
 #scene:active { cursor: grabbing; }
+#sky-fx { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; }
 #frame { position: fixed; inset: 0; pointer-events: none; }
 #frame svg { display: block; width: 100vw; height: 100vh; }
 
 .title { position: fixed; top: calc(var(--band) + 14px); left: calc(var(--band) + 18px); pointer-events: none; text-shadow: 0 1px 0 rgba(255,255,255,.6); }
 .title h1 { margin: 0; font-size: 34px; font-weight: 500; letter-spacing: .02em; line-height: 1; }
 .title p { margin: 6px 0 0; font-size: 12px; color: var(--ink-soft); letter-spacing: .08em; text-transform: uppercase; }
+.title .wx { margin-top: 10px; font-size: 13px; letter-spacing: .02em; text-transform: none; color: var(--ink); pointer-events: auto; cursor: default; min-height: 1em; }
+.title .wx:empty { display: none; }
+#scene.night ~ .title, #scene.night ~ .title p, #scene.night ~ .ui .pos, #scene.night ~ .hint { color: #E8E2D4; text-shadow: none; }
+#scene.night ~ .title .wx { color: #F3EBD7; }
 
 .ui { position: fixed; left: calc(var(--band) + 18px); bottom: calc(var(--band) + 14px); display: flex; gap: 6px; align-items: center; }
 .ui button { font: inherit; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); background: rgba(247,241,228,.85); border: 1px solid rgba(43,36,25,.35); border-radius: 2px; padding: 5px 9px; cursor: pointer; }
@@ -65,3 +70,29 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--paper)
 @media (prefers-reduced-motion: reduce) {
   .fig.in, .fig.in > * { animation: none; }
 }
+
+/* ---------- weather ---------- */
+#scene { transition: filter 2.5s ease; }
+#scene stop { transition: stop-color 2.5s ease; }
+#scene.dawn { filter: brightness(.96); }
+#scene.dusk { filter: saturate(1.1) sepia(.12) brightness(.9); }
+#scene.night { filter: brightness(.5) saturate(.6); }
+#scene [fill], #scene [stroke] { transition: fill 2s ease, stroke 2s ease; }
+/* snow cover: recolour the slopes and roofs; frost: halfway */
+#scene.snowy [fill="#56704E"] { fill: #E7EBE6; }
+#scene.snowy [fill="#7A9474"] { fill: #D9E0D8; }
+#scene.snowy [fill="#9AAAB8"] { fill: #C7D0DA; }
+#scene.snowy [fill="#5B5F62"] { fill: #EEF1EE; }
+#scene.snowy [fill="#857A5C"] { fill: #B9B4A4; }
+#scene.snowy [stroke="#3A4D35AA"] { stroke: #9CA79B; }
+#scene.snowy [fill="#7FA3B8"] { fill: #93AFC0; }
+#scene.frost [fill="#56704E"] { fill: #8A9C86; }
+#scene.frost [fill="#7A9474"] { fill: #A6B6A2; }
+#scene.frost [fill="#9AAAB8"] { fill: #B4C0CB; }
+/* wind: deodars sway from the base */
+#scene.windy .fig-tree > path { animation: sway var(--sway-dur, 3s) ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes sway { from { transform: rotate(calc(var(--sway, 2deg) * -1)); } to { transform: rotate(var(--sway, 2deg)); } }
+@keyframes rain-fall { to { transform: translateY(var(--h, 1000px)); } }
+@keyframes snow-fall { 50% { transform: translate(var(--sx, 30px), calc(var(--h, 1000px) / 2)); } to { transform: translate(0, var(--h, 1000px)); } }
+@keyframes cloud-drift { from { transform: translateX(-12%); } to { transform: translateX(12%); } }
+@media (prefers-reduced-motion: reduce) { #scene.windy .fig-tree > path { animation: none; } }

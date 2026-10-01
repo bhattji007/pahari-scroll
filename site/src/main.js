@@ -2,6 +2,7 @@ import { seedFromString } from "./prng.js";
 import { W, H, LAYERS, BANDS, makeTerrain, generateChunk } from "./chunk.js";
 import { chunkLayerString, defsString, skeletonString, standaloneSvg } from "./render.js";
 import { aipanFrame } from "./aipan.js";
+import { createWeather } from "./weather.js";
 
 const BAND = 28;
 const svg = document.getElementById("scene");
@@ -15,9 +16,9 @@ function readHash() {
   const seedStr = q.get("seed") ?? String(Math.floor(Math.random() * 1e6));
   const seed = /^\d+$/.test(seedStr) ? Number(seedStr) >>> 0 : seedFromString(seedStr);
   const x = Number(q.get("x") ?? 0) || 0;
-  return { seedStr, seed, x };
+  return { seedStr, seed, x, wx: q.get("wx") };
 }
-let { seedStr, seed, x } = readHash();
+let { seedStr, seed, x, wx: wxSim } = readHash();
 let terrain = makeTerrain(seed);
 const chunks = new Map(); // c -> { el, data }
 let writeHashTimer = null;
@@ -33,12 +34,14 @@ function layout() {
   svg.setAttribute("viewBox", `${x} 0 ${vw} ${H}`);
   frame.innerHTML = aipanFrame(innerWidth, innerHeight, BAND);
   ensureChunks();
+  weather.onView(x, vw);
 }
 function setX(nx) {
   x = nx;
   svg.setAttribute("viewBox", `${x} 0 ${vw} ${H}`);
   posLabel.textContent = (x / W).toFixed(2);
   ensureChunks();
+  weather.onView(x, vw);
   revealFigures();
   writeHash();
 }
@@ -68,10 +71,14 @@ function ensureChunks() {
   const c0 = Math.floor((x - W * 0.5) / W), c1 = Math.floor((x + vw + W * 0.5) / W);
   for (let c = c0; c <= c1; c++) if (!chunks.has(c)) addChunk(c);
   for (const [c, { els }] of chunks) if (c < c0 - 1 || c > c1 + 1) { els.forEach((el) => el.remove()); chunks.delete(c); pending = pending.filter((f) => f.c !== c); }
-  // the translucent bands span every loaded chunk as one element each
+  refreshBands();
+}
+// The translucent bands span every loaded chunk as one element each; weather scales them.
+function refreshBands() {
   const loaded = [...chunks.keys()];
-  const bx0 = Math.min(...loaded) * W, bx1 = (Math.max(...loaded) + 1) * W;
-  for (const b of BANDS) { const el = document.getElementById(b.id); el.setAttribute("x", bx0); el.setAttribute("width", bx1 - bx0); el.setAttribute("opacity", b.id === "gold" ? b.opacity : b.opacity * MIST); }
+  if (!loaded.length) return;
+  const bx0 = Math.min(...loaded) * W, bx1 = (Math.max(...loaded) + 1) * W, mods = weather.mods;
+  for (const b of BANDS) { const el = document.getElementById(b.id); el.setAttribute("x", bx0); el.setAttribute("width", bx1 - bx0); el.setAttribute("opacity", Math.min(1, b.id === "gold" ? b.opacity * mods.gold : b.opacity * MIST * mods.mist).toFixed(2)); }
 }
 function addChunk(c) {
   const data = generateChunk(seed, c, terrain);
@@ -168,7 +175,9 @@ document.getElementById("seed").addEventListener("click", () => {
 // ---------- go ----------
 svg.innerHTML = defsString() + skeletonString();
 for (const l of LAYERS) layerEls[l] = document.getElementById("L-" + l);
+const weather = createWeather({ scene: svg, celestial: document.getElementById("celestial"), fx: document.getElementById("sky-fx"), status: document.getElementById("wx"), H, onBands: refreshBands });
 seedLabel.textContent = seedStr;
 layout();
 setX(x);
+weather.start(wxSim);
 requestAnimationFrame(tick);

@@ -38,6 +38,9 @@ try {
   report.musicLoops = await evalJs("document.getElementById('bgm').loop");
   if (hold) { console.log(`holding ${hold}s with music on...`); await sleep(hold * 1000); report.heldSeconds = hold; }
   report.githubLink = await evalJs("document.querySelector('a.gh')?.href");
+  report.weather = await evalJs("document.getElementById('wx').textContent");
+  report.sceneClasses = await evalJs("document.getElementById('scene').className.baseVal");
+  report.celestialNodes = await evalJs("document.getElementById('celestial').childElementCount");
   await evalJs("window.dispatchEvent(new WheelEvent('wheel', { deltaY: 2400, cancelable: true }))"); await sleep(600);
   report.posAfterScroll = await evalJs("document.getElementById('pos').textContent");
   for (let i = 0; i < 12; i++) { await evalJs("window.dispatchEvent(new WheelEvent('wheel', { deltaY: 1500, cancelable: true }))"); await sleep(120); }
