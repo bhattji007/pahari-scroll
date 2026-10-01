@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>जागेश्वर · Pahari Scroll</title>
+  <meta name="description" content="An infinite procedurally generated Kumaoni landscape: the Jageshwar temple valley in the Kangra miniature idiom. No images, no textures, one seed." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <svg id="scene" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin slice" aria-label="Infinite Pahari landscape scroll"></svg>
+  <div id="frame" aria-hidden="true"></div>
+
+  <header class="title">
+    <h1>जागेश्वर</h1>
+    <p>Pahari Scroll · a procedural Kumaoni valley</p>
+  </header>
+
+  <nav class="ui" aria-label="Controls">
+    <button id="seed" title="Change seed">seed <b>–</b></button>
+    <button id="new" title="Random seed">new</button>
+    <button id="auto" title="Auto-scroll (space)">drift</button>
+    <button id="home" title="Back to the start">home</button>
+    <button id="save" title="Download the current view as SVG">save svg</button>
+    <button id="sound" class="icon" title="Sound: tanpura, bansuri, temple bells (synthesised from the seed)" aria-pressed="false" aria-label="Toggle sound"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path class="wave" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.5a6 6 0 0 1 0 9" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+    <span class="pos" title="Position in chunks"><span id="pos">0.00</span></span>
+  </nav>
+
+  <p class="hint">scroll · drag · ← →</p>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

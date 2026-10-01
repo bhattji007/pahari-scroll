@@ -1,0 +1,12 @@
+{
+  "name": "pahari-scroll",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Infinite procedural Kumaoni landscape: the Jageshwar temple valley in the Kangra miniature idiom.",
+  "scripts": {
+    "dev": "python3 -m http.server 8787",
+    "snapshot": "node scripts/snapshot.mjs",
+    "test": "node scripts/test.mjs"
+  }
+}

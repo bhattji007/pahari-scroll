@@ -1,0 +1,65 @@
+:root {
+  --paper: #F7F1E4;
+  --ink: #2B2419;
+  --ink-soft: #6E6252;
+  --geru: #A8432E;
+  --bisvar: #F5EFE3;
+  --band: 28px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--paper); color: var(--ink); font-family: Georgia, "Times New Roman", serif; }
+
+#scene { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; touch-action: none; cursor: grab; }
+#scene:active { cursor: grabbing; }
+#frame { position: fixed; inset: 0; pointer-events: none; }
+#frame svg { display: block; width: 100vw; height: 100vh; }
+
+.title { position: fixed; top: calc(var(--band) + 14px); left: calc(var(--band) + 18px); pointer-events: none; text-shadow: 0 1px 0 rgba(255,255,255,.6); }
+.title h1 { margin: 0; font-size: 34px; font-weight: 500; letter-spacing: .02em; line-height: 1; }
+.title p { margin: 6px 0 0; font-size: 12px; color: var(--ink-soft); letter-spacing: .08em; text-transform: uppercase; }
+
+.ui { position: fixed; left: calc(var(--band) + 18px); bottom: calc(var(--band) + 14px); display: flex; gap: 6px; align-items: center; }
+.ui button { font: inherit; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); background: rgba(247,241,228,.85); border: 1px solid rgba(43,36,25,.35); border-radius: 2px; padding: 5px 9px; cursor: pointer; backdrop-filter: blur(2px); }
+.ui button:hover { background: var(--bisvar); border-color: var(--ink); }
+.ui button.on { background: var(--geru); color: var(--bisvar); border-color: var(--geru); }
+.ui button b { font-weight: 600; text-transform: none; letter-spacing: 0; margin-left: 4px; }
+.ui button.icon { padding: 4px 7px; display: inline-flex; align-items: center; }
+.ui button.icon:not(.on) .wave { opacity: .25; }
+.ui .pos { font-size: 11px; color: var(--ink-soft); margin-left: 6px; font-variant-numeric: tabular-nums; }
+
+.hint { position: fixed; right: calc(var(--band) + 18px); bottom: calc(var(--band) + 18px); margin: 0; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); pointer-events: none; }
+
+@media (max-width: 640px) {
+  :root { --band: 16px; }
+  .title h1 { font-size: 26px; }
+  .hint { display: none; }
+  .ui { flex-wrap: wrap; right: calc(var(--band) + 12px); }
+}
+
+/* ---------- building animation ---------- */
+/* A figure rises from its ground point; its pigment layers appear in construction order
+   (stone, light stone, rathas, dark openings, line work). --d is the sweep delay, --j a small jitter. */
+.fig { transform-box: fill-box; transform-origin: 50% 100%; }
+.fig:not(.in) { opacity: 0; }
+.fig.in { animation: rise 640ms cubic-bezier(.22, 1.1, .36, 1) both; animation-delay: calc(var(--d, 0ms) + var(--j, 0ms)); }
+.fig.in > * { animation: appear 320ms ease-out both; animation-delay: calc(var(--d, 0ms) + var(--j, 0ms) + var(--k, 0ms)); }
+.fig.in > :nth-child(1) { --k: 0ms; }
+.fig.in > :nth-child(2) { --k: 140ms; }
+.fig.in > :nth-child(3) { --k: 260ms; }
+.fig.in > :nth-child(4) { --k: 360ms; }
+.fig.in > :nth-child(5) { --k: 460ms; }
+.fig.in > :nth-child(n+6) { --k: 520ms; }
+.fig-tree.in { animation-duration: 900ms; }
+/* house: base and courses, then walls and geru band, then roof and slate, then balcony, windows, door */
+.fig-house.in > :nth-child(-n+2) { --k: 0ms; }
+.fig-house.in > :nth-child(3), .fig-house.in > :nth-child(4) { --k: 140ms; }
+.fig-house.in > :nth-child(5), .fig-house.in > :nth-child(6) { --k: 300ms; }
+.fig-house.in > :nth-child(n+7) { --k: 440ms; }
+/* platform: lower terrace, courses, then the upper step */
+.fig-platform.in > :nth-child(-n+2) { --k: 0ms; }
+.fig-platform.in > :nth-child(3) { --k: 160ms; }
+@keyframes rise { from { transform: scaleY(0); } 70% { transform: scaleY(1.04); } to { transform: scaleY(1); } }
+@keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .fig.in, .fig.in > * { animation: none; }
+}
