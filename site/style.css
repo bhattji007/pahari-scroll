@@ -19,7 +19,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--paper)
 .title p { margin: 6px 0 0; font-size: 12px; color: var(--ink-soft); letter-spacing: .08em; text-transform: uppercase; }
 
 .ui { position: fixed; left: calc(var(--band) + 18px); bottom: calc(var(--band) + 14px); display: flex; gap: 6px; align-items: center; }
-.ui button { font: inherit; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); background: rgba(247,241,228,.85); border: 1px solid rgba(43,36,25,.35); border-radius: 2px; padding: 5px 9px; cursor: pointer; backdrop-filter: blur(2px); }
+.ui button { font: inherit; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); background: rgba(247,241,228,.85); border: 1px solid rgba(43,36,25,.35); border-radius: 2px; padding: 5px 9px; cursor: pointer; }
 .ui button:hover { background: var(--bisvar); border-color: var(--ink); }
 .ui button.on { background: var(--geru); color: var(--bisvar); border-color: var(--geru); }
 .ui button b { font-weight: 600; text-transform: none; letter-spacing: 0; margin-left: 4px; }
@@ -27,12 +27,14 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--paper)
 .ui button.icon:not(.on) .wave { opacity: .25; }
 .ui .pos { font-size: 11px; color: var(--ink-soft); margin-left: 6px; font-variant-numeric: tabular-nums; }
 
-.hint { position: fixed; right: calc(var(--band) + 18px); bottom: calc(var(--band) + 18px); margin: 0; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); pointer-events: none; }
+.hint { position: fixed; right: calc(var(--band) + 18px); bottom: calc(var(--band) + 18px); margin: 0; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); pointer-events: none; display: flex; gap: 14px; align-items: center; }
+.hint .gh { pointer-events: auto; color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; gap: 5px; border-bottom: 1px solid rgba(43,36,25,.35); padding-bottom: 1px; }
+.hint .gh:hover { border-color: var(--ink); }
 
 @media (max-width: 640px) {
   :root { --band: 16px; }
   .title h1 { font-size: 26px; }
-  .hint { display: none; }
+  .hint { font-size: 10px; }
   .ui { flex-wrap: wrap; right: calc(var(--band) + 12px); }
 }
 

@@ -2,7 +2,7 @@
 
 An infinite, procedurally generated Kumaoni landscape: the Jageshwar temple valley painted in the idiom of
 Kangra miniatures. Nagara stone temples step down terraced slopes under deodar, with the Nanda Devi snow
-line behind and the Jataganga below. No images, no textures, no dependencies. One seed, one valley.
+line behind and the Jataganga below. No images, no textures, no dependencies. One seed, one valley, one background track.
 
 Modelled on Lingdong Huang's *{Shan, Shui}\**.
 
@@ -22,7 +22,7 @@ open http://localhost:8787/#seed=7
 - space or **drift** to auto-scroll
 - **seed** to type a number or a word; **new** for a random one
 - **save svg** downloads the current view as a standalone SVG
-- the speaker button turns on sound, muted by default: a Pahadi bansuri folk track synthesised from the same seed. Harmonium-style drone, a bright bansuri playing two-bar call-and-response phrases in Raag Pahadi on a 90–105 bpm grid, a light hudka pulse, a harmonic temple ghanta when a complex comes into view, and the river. No audio files
+- background music, *Last Light Over Peaks*, loops from the start; browsers that block unmuted autoplay start it on your first scroll, click or key. The speaker button mutes it
 - the URL hash carries `seed` and `x`, so a link reproduces exactly what you see
 - figures are built as they scroll into view: each temple, tree, house and platform rises from its ground point and its pigment layers appear in construction order (stone, light stone, rathas, openings, line work). After a jump the visible figures build in a left-to-right sweep. `prefers-reduced-motion` disables it.
 
@@ -34,7 +34,7 @@ open http://localhost:8787/#seed=7
 - `src/chunk.js` global terrain plus per-chunk planning: where the great complex, the groups, the shrines, houses and trees go
 - `src/render.js` nodes to SVG strings; the scene is grouped by layer, not by chunk, so the mist and gold bands are single continuous rectangles and chunk boundaries never seam
 - `src/aipan.js` the painted border around the viewport
-- `src/pahari-audio.js` the seeded soundscape; `composeRound` is a pure function, so `node scripts/sargam.mjs --seed jageshwar` prints the melody as sargam
+- `audio/last-light-over-peaks.mp3` the background track, the one asset in the project
 - `src/main.js` viewport, chunk lifecycle, input, URL state, and the viewport-triggered build animation
 
 The math is written up in `../MATH.md`. The design boards and reference research live one directory up.
@@ -45,6 +45,5 @@ The math is written up in `../MATH.md`. The design boards and reference research
 npm test                                    # continuity, determinism, cadence, containment
 npm run snapshot -- --seed 7 --from 0 --to 2 --out poster.svg
 node scripts/shot.mjs --url "http://localhost:8787/#seed=7" --at 300,900,2500 --out shots   # real-time frames via DevTools Protocol
-node scripts/check.mjs --hold 60                                                           # load, start audio, hold, scroll, reseed; fails on any console error
-node scripts/sargam.mjs --seed jageshwar --rounds 3                                        # print the composed phrases
+node scripts/check.mjs                                                                     # load, start music, scroll, reseed, mute; fails on any console error
 ```

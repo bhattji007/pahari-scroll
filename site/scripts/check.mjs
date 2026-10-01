@@ -1,5 +1,5 @@
-// Smoke test of the live page over the DevTools Protocol: load, start audio, scroll, ring, reseed,
-// and report any console error or uncaught exception. Audio is allowed without a gesture here.
+// Smoke test of the live page over the DevTools Protocol: load, start music, scroll, reseed, mute,
+// and report any console error or uncaught exception. Autoplay is allowed without a gesture here.
 //   node scripts/check.mjs --url "http://localhost:8787/#seed=7"
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
@@ -30,10 +30,11 @@ try {
   const report = {};
   report.figures = await evalJs("document.querySelectorAll('.fig').length");
   report.built = await evalJs("document.querySelectorAll('.fig.in').length");
-  await evalJs("document.getElementById('sound').click()"); await sleep(800);
-  report.soundOn = await evalJs("document.getElementById('sound').classList.contains('on')");
-  if (hold) { console.log(`holding ${hold}s with sound on...`); await sleep(hold * 1000); report.heldSeconds = hold; }
-  report.contexts = await evalJs("(typeof AudioContext !== 'undefined')");
+  await evalJs("window.dispatchEvent(new PointerEvent('pointerdown'))"); await sleep(800);
+  report.musicPlaying = await evalJs("!document.getElementById('bgm').paused");
+  report.musicLoops = await evalJs("document.getElementById('bgm').loop");
+  if (hold) { console.log(`holding ${hold}s with music on...`); await sleep(hold * 1000); report.heldSeconds = hold; }
+  report.githubLink = await evalJs("document.querySelector('a.gh')?.href");
   await evalJs("window.dispatchEvent(new WheelEvent('wheel', { deltaY: 2400, cancelable: true }))"); await sleep(600);
   report.posAfterScroll = await evalJs("document.getElementById('pos').textContent");
   for (let i = 0; i < 12; i++) { await evalJs("window.dispatchEvent(new WheelEvent('wheel', { deltaY: 1500, cancelable: true }))"); await sleep(120); }
@@ -42,7 +43,7 @@ try {
   await evalJs("location.hash = '#seed=kumaon&x=0'"); await sleep(1200);
   report.seedLabel = await evalJs("document.querySelector('#seed b').textContent");
   await evalJs("document.getElementById('sound').click()"); await sleep(300);
-  report.soundOffAgain = await evalJs("!document.getElementById('sound').classList.contains('on')");
+  report.mutedAfterClick = await evalJs("document.getElementById('bgm').paused");
   await sleep(2000);
   ws.close();
   console.log(JSON.stringify(report, null, 1));

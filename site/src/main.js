@@ -2,7 +2,6 @@ import { seedFromString } from "./prng.js";
 import { W, H, LAYERS, BANDS, makeTerrain, generateChunk } from "./chunk.js";
 import { chunkLayerString, defsString, skeletonString, standaloneSvg } from "./render.js";
 import { aipanFrame } from "./aipan.js";
-import { createPahariAudio } from "./pahari-audio.js";
 
 const BAND = 28;
 const svg = document.getElementById("scene");
@@ -20,7 +19,6 @@ function readHash() {
 }
 let { seedStr, seed, x } = readHash();
 let terrain = makeTerrain(seed);
-const audio = createPahariAudio({ seed: seedStr, screenWidth: W });
 const chunks = new Map(); // c -> { el, data }
 let writeHashTimer = null;
 function writeHash() {
@@ -40,7 +38,6 @@ function setX(nx) {
   x = nx;
   svg.setAttribute("viewBox", `${x} 0 ${vw} ${H}`);
   posLabel.textContent = (x / W).toFixed(2);
-  audio.setPosition(x);
   ensureChunks();
   revealFigures();
   writeHash();
@@ -59,19 +56,11 @@ function revealFigures() {
     if (f.wx < lo || f.wx > hi) { keep.push(f); continue; }
     if (!REDUCED) f.el.style.setProperty("--d", sweep ? `${Math.round(((f.wx - x) / vw) * 900)}ms` : "0ms");
     f.el.classList.add("in");
-    ringFor(f.el);
   }
   pending = keep;
   sweep = false;
 }
 function sweepNext() { sweep = true; }
-// Bells: only a dense temple complex rings, several staggered strikes.
-function ringFor(el) {
-  if (!audio.running) return;
-  const count = Number(el.dataset.count || 0);
-  if (count >= 18) audio.ring(0.6, Math.round(count / 6)); // temple complexes only; the module enforces 20 s between rings
-}
-
 // ---------- chunk lifecycle ----------
 const MIST = 0.6;
 const layerEls = {};
@@ -105,7 +94,6 @@ function reseed(newSeedStr) {
   chunks.clear();
   pending = [];
   seedLabel.textContent = seedStr;
-  audio.setSeed(seedStr);
   sweepNext();
   setX(0);
 }
@@ -143,11 +131,23 @@ document.getElementById("save").addEventListener("click", () => {
   a.click();
   URL.revokeObjectURL(a.href);
 });
-document.getElementById("sound").addEventListener("click", async (e) => {
-  const btn = e.currentTarget;
-  if (audio.running) { audio.stop(); btn.classList.remove("on"); btn.setAttribute("aria-pressed", "false"); }
-  else { await audio.start(); btn.classList.add("on"); btn.setAttribute("aria-pressed", "true"); }
-});
+// ---------- background music ----------
+// A plain looped track, on by default. Browsers only allow unmuted autoplay after an interaction,
+// so we try at once and otherwise start on the first pointer, key or wheel event.
+const bgm = document.getElementById("bgm");
+const soundBtn = document.getElementById("sound");
+bgm.volume = 0.7;
+let muted = false;
+function showSound() { soundBtn.classList.toggle("on", !muted && !bgm.paused); soundBtn.setAttribute("aria-pressed", String(!muted)); }
+async function playMusic() { if (muted) return; try { await bgm.play(); } catch {} showSound(); }
+function armAutoplay() {
+  const once = () => { playMusic(); for (const ev of ["pointerdown", "keydown", "wheel", "touchstart"]) removeEventListener(ev, once, true); };
+  for (const ev of ["pointerdown", "keydown", "wheel", "touchstart"]) addEventListener(ev, once, true);
+}
+soundBtn.addEventListener("click", (e) => { e.stopPropagation(); muted = !muted; if (muted) bgm.pause(); else playMusic(); showSound(); });
+bgm.addEventListener("play", showSound); bgm.addEventListener("pause", showSound);
+playMusic().then(() => { if (bgm.paused) armAutoplay(); });
+
 document.getElementById("seed").addEventListener("click", () => {
   const s = prompt("Seed (number or word)", seedStr);
   if (s && s.trim()) reseed(s.trim());
